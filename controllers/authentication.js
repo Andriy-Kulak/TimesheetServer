@@ -6,30 +6,24 @@ const _ = require('lodash');
 //Provides token for user that can be tracked by our app
 function tokenForUser(user) {
 	const timestamp = new Date().getTime();
-	return jwt.encode({sub: user.id, iat: timestamp}, config.secret);
+	return jwt.encode({
+		sub: user.id,
+		iat: timestamp,
+		firstName: user.firstName,
+		lastName: user.lastName,
+		email: user.email
+	}, config.secret);
 }
-
 
 exports.userInfo;
 
 exports.signin = function(req, res, next) {
 	//User has already had their email and password auth'd
 	// We just need to give them
-	let userData = res.socket._httpMessage.req.user;
 
-	let userTest = {
-		firstName: userData.firstName,
-		lastName: userData.lastName,
-		email: userData.email
-	}
-	userInfo = userTest;
+
 	res.send({
 		token: tokenForUser(req.user),
-		data:{
-		firstName: userData.firstName,
-		lastName: userData.lastName,
-		email: userData.email
-	}
 	});
 	console.log("res.body", res.socket._httpMessage.req.user.firstName);
 	console.log("userData", userData);
