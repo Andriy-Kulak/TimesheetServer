@@ -19,16 +19,16 @@ exports.getTimeByUser = function(req, res, next) {
 
 //POST method for timesheet
 exports.postTime = function(req, res, next) {
-	const name = req.body.name;
     const dateWorked = req.body.dateWorked;
     const hoursWorked = req.body.hoursWorked;
     const workType = req.body.workType;
+    const userInfo = req.body.userInfo;
 
     const timesheet = new Timesheet({
-        name: name,
         dateWorked: dateWorked,
         hoursWorked: hoursWorked,
-        workType: workType
+        workType: workType,
+        userInfo: userInfo
     });
     console.log('userInfo', userInfo);
 

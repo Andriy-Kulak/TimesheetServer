@@ -1,10 +1,10 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var TimesheetSchema = new mongoose.Schema({
-  name: String,
+let TimesheetSchema = new mongoose.Schema({
   dateWorked: Date,
   hoursWorked: Number,
-  workType: String
+  workType: String,
+  userInfo: Object
 });
 
 //   date_submitted: Date.now

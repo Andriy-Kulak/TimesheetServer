@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const fbSchema = new Schema({
@@ -6,4 +6,4 @@ const fbSchema = new Schema({
   dateAdded: { type: 'Date', default: Date.now, required: true }
 });
 
-export default mongoose.model('FbData', postSchema);
+module.exports = mongoose.model('FbData', fbSchema);

@@ -7,9 +7,7 @@ const userSchema = new Schema({
 	email: { type: String, unique: true, lowercase: true }, //whenever string is saved it will be transformed to lowercase
 	password: String,
 	firstName: String,
-	lastName: String,
-	companyName: String,
-	fbHandle: String
+	lastName: String
 });
 
 // On Save Hook, encrypt ... fnction is ran before userSchema instance is saved

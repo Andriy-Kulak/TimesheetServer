@@ -1,7 +1,6 @@
 const jwt = require('jwt-simple');
 const User = require('../models/user');
 const config = require('../config');
-const _ = require('lodash');
 
 //Provides token for user that can be tracked by our app
 function tokenForUser(user) {
@@ -17,7 +16,7 @@ function tokenForUser(user) {
 
 exports.userInfo;
 
-exports.signin = function(req, res, next) {
+exports.signin = function(req, res) {
 	//User has already had their email and password auth'd
 	// We just need to give them
 
@@ -25,8 +24,7 @@ exports.signin = function(req, res, next) {
 	res.send({
 		token: tokenForUser(req.user),
 	});
-	console.log("res.body", res.socket._httpMessage.req.user.firstName);
-	console.log("userData", userData);
+
 }
 
 //Signup function
@@ -35,8 +33,6 @@ exports.signup = function(req, res, next) {
 	const password = req.body.password;
 	const firstName = req.body.firstName;
 	const lastName = req.body.lastName;
-	const companyName = req.body.companyName;
-	const fbHandle = req.body.fbHandle;
 
 	console.log("MADE it to signup function");
 
@@ -58,9 +54,7 @@ exports.signup = function(req, res, next) {
 			email: email,
 			password: password,
 			firstName: firstName,
-			lastName: lastName,
-			companyName: companyName,
-			fbHandle: fbHandle
+			lastName: lastName
 		});
 
 		user.save(function(err) {
