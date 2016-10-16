@@ -11,7 +11,9 @@ exports.getTime = function(req, res, next) {
 
 // GET by user name (temporary)
 exports.getTimeByUser = function(req, res, next) {
-    Timesheet.find({name: req.params.name}, function (err, data) {
+    var test123 = parseInt(req.params.id);
+    console.log('test123', test123);
+    Timesheet.find({'userInfo.sub': req.params.id}, function (err, data) {
         if (err) return next(err);
         res.json(data);
     });

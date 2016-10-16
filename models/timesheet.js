@@ -4,7 +4,13 @@ let TimesheetSchema = new mongoose.Schema({
   dateWorked: Date,
   hoursWorked: Number,
   workType: String,
-  userInfo: Object
+  userInfo: {
+    email: String,
+    firstName: String,
+    lastName: String,
+    iat: String,
+    sub: String
+  }
 });
 
 //   date_submitted: Date.now
