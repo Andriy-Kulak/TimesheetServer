@@ -22,4 +22,6 @@ module.exports = function(app) {
 	app.get('/api/v1/timesheet/:id', TimeController.getTimeByUser);
 	app.delete('/api/v1/timesheet/:id', TimeController.deleteTime);
 
+	app.post('/api/v1/test/timesheet', TimeController.TESTpostTime);
+
 }

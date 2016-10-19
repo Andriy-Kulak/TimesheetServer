@@ -1,5 +1,6 @@
 const Timesheet = require('../models/timesheet');
-const userInfo = require('./authentication.js');
+const TestTimesheet = require('../models/timesheet2');
+const _ = require('lodash');
 
 // GET (all) method for timesheet
 exports.getTime = function(req, res, next) {
@@ -11,8 +12,6 @@ exports.getTime = function(req, res, next) {
 
 // GET by user name (temporary)
 exports.getTimeByUser = function(req, res, next) {
-    var test123 = parseInt(req.params.id);
-    console.log('test123', test123);
     Timesheet.find({'userInfo.sub': req.params.id}, function (err, data) {
         if (err) return next(err);
         res.json(data);
@@ -38,6 +37,32 @@ exports.postTime = function(req, res, next) {
         if (err) return next(err);
         res.json(data);
     });
+}
+
+exports.TESTpostTime = function(req, res, next){
+    const userInfo = req.body.userInfo;
+    req.body = _.omit(req.body, 'userInfo');
+    let testArray = [];
+        _.forEach(req.body, (value, key) => {
+            value.userInfo = userInfo;
+            testArray.push(value);
+        });
+    let str= JSON.stringify(testArray);
+    str = str.replace(/"monDev":|"tueDev":|"wedDev":|"thurDev":|"friDev":|"satDev":|"sunDev":/g, '"dev":');
+    str = str.replace(/"monQa":|"tueQa":|"wedQa":|"thurQa":|"friQa":|"satQa":|"sunQa":/g, '"qa":');
+    let objectTest = JSON.parse(str);
+    
+    console.log('i got the response', objectTest);
+
+    TestTimesheet.insertMany(objectTest, onInsert);
+
+    function onInsert(err, docs){
+        if(err){
+            console.log(err);
+        } else {
+            console.log('docs were stored', docs.length);
+        }
+    } 
 }
 
 exports.deleteTime = function(req, res, next) {
