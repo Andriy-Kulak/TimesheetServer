@@ -43,41 +43,38 @@ exports.TESTgetime = function(req, res, next) {
     TestTimesheet.find({'userInfo.sub': req.params.id}, function (err, data) {
         if (err) return next(err);
         res.json(data);
+        console.log('return data', data);
     });
+
+    console.log('req.body', req.params.id);
 }
 
 exports.TESTpostTime = function(req, res, next){
-    const userInfo = req.body.userInfo;
-    req.body = _.omit(req.body, 'userInfo');
-    let testArray = [];
-        _.forEach(req.body, (value, key) => {
-            value.userInfo = userInfo;
-            testArray.push(value);
-        });
-    let str= JSON.stringify(testArray);
-    str = str.replace(/"monDev":|"tueDev":|"wedDev":|"thurDev":|"friDev":|"satDev":|"sunDev":/g, '"dev":');
-    str = str.replace(/"monQa":|"tueQa":|"wedQa":|"thurQa":|"friQa":|"satQa":|"sunQa":/g, '"qa":');
-    let objectTest = JSON.parse(str);
+
+    // const userInfo = req.body.userInfo;
+    // req.body = _.omit(req.body, 'userInfo');
+    // let testArray = [];
+    //     _.forEach(req.body, (value, key) => {
+    //         value.userInfo = userInfo;
+    //         testArray.push(value);
+    //     });
+    // let str= JSON.stringify(testArray);
+    // str = str.replace(/"monDev":|"tueDev":|"wedDev":|"thurDev":|"friDev":|"satDev":|"sunDev":/g, '"dev":');
+    // str = str.replace(/"monQa":|"tueQa":|"wedQa":|"thurQa":|"friQa":|"satQa":|"sunQa":/g, '"qa":');
+    // let objectTest = JSON.parse(str);
     
     // console.log('i got the response', objectTest);
 
-    TestTimesheet.insertMany(objectTest, onInsert);
+    let testArray = [];
+    _.forEach(req.body, (value, key) => {
+            testArray.push(value);
+            TestTimesheet.update({"_id": value._id}, {"$set": {"dev": value.dev, "qa": value.qa }}, onInsert);
+    });
 
-    // TestTimesheet.updateMany(
-    //     {'dateWorked': objectTest.dateWorked},
-    //     objectTest,
-    //     {upsert: true});
-    // let dateArray = [];
-    // objectTest.map(function(obj){
-    //     return dateArray.push(obj.dateWorked);
-    // });
-    // console.log('test', dateArray);
-    // Timesheet.find({
-    //     'dateWorked': {$in:[dateArray]}
-    // }, function (err, data) {
-    //     if (err) return next(err);
-    //     console.log(res.json(data.body));
-    // });
+    // testArray.forEach(function(data) {
+    //     TestTimesheet.update({"_id": data._id}, {"$set": {"dev": data.dev, "qa": data.qa }}, onInsert);
+    // })
+    console.log('req.body', testArray);
         
     function onInsert(err, docs){
         if(err){
