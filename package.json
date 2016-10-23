@@ -21,6 +21,7 @@
     "jwt-simple": "^0.5.0",
     "lodash": "^3.10.1",
     "md5": "^2.1.0",
+    "moment": "^2.15.1",
     "mongoose": "^4.4.17",
     "morgan": "^1.7.0",
     "nodemon": "^1.9.2",
@@ -40,14 +41,16 @@
       "browser": true,
       "node": true
     },
-    "plugins" : ["node"],
+    "plugins": [
+      "node"
+    ],
     "extends": [
       "plugin:import/errors",
       "plugin:import/warnings",
       "eslint:recommended",
       "plugin:node/recommended"
     ],
-    "rules" : {
+    "rules": {
       "no-console": "off"
     }
   }
