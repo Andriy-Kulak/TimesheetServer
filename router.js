@@ -16,13 +16,16 @@ module.exports = function(app) {
 	app.post('/signin', requireSignin, Authentication.signin);
 	app.post('/signup', Authentication.signup);
 
-	// Timesheet API endpoints
-	app.post('/api/v1/timesheet', TimeController.postTime);
-	app.get('/api/v1/timesheet', TimeController.getTime);
-	app.get('/api/v1/timesheet/:id', TimeController.getTimeByUser);
-	app.delete('/api/v1/timesheet/:id', TimeController.deleteTime);
+	// updated API endpoints
+	app.post('/api/v2/timesheet', TimeController.postTime);
+	app.get('/api/v2/timesheet/user/:id', TimeController.getTime2);
+	app.get('/api/v2/timesheet/:id/:week', TimeController.getTime);
+	
 
-	app.post('/api/v1/test/timesheet', TimeController.TESTpostTime);
-	app.get('/api/v1/test/timesheet/:id/:week', TimeController.TESTgetime);
+	// OLD Timesheet API endpoints// will be depricated
+	app.post('/api/v1/timesheet', TimeController.OLDpostTime);
+	app.get('/api/v1/timesheet', TimeController.OLDgetTime);
+	app.get('/api/v1/timesheet/:id', TimeController.OLDgetTimeByUser);
+	app.delete('/api/v1/timesheet/:id', TimeController.OLDdeleteTime);
 
 }
