@@ -4,6 +4,9 @@ let TimesheetSchema2 = new mongoose.Schema({
   dateWorked: Date,
   qa: Number,
   dev: Number,
+  admin: Number,
+  rd: Number,
+  other: Number,
   userInfo: {
     email: String,
     firstName: String,

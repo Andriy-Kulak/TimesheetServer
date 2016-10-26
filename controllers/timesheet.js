@@ -43,6 +43,7 @@ exports.postTime = function(req, res, next) {
 
 // gets data for specific timesheet
 // searches for the user (req.params.id) and the week (req.params.week)
+// query is also sorted in ascending order (monday is req.body[0] while sunday is req.body[6])
 exports.TESTgetime = function(req, res, next) {
     console.log('req.params.id', req.params.id);
     console.log('req.params.week', moment(req.params.week).format());
@@ -62,34 +63,22 @@ exports.TESTgetime = function(req, res, next) {
 }
 
 exports.TESTpostTime = function(req, res, next){
-
-    // const userInfo = req.body.userInfo;
-    // req.body = _.omit(req.body, 'userInfo');
-    // let testArray = [];
-    //     _.forEach(req.body, (value, key) => {
-    //         value.userInfo = userInfo;
-    //         testArray.push(value);
-    //     });
-    // let str= JSON.stringify(testArray);
-    // str = str.replace(/"monDev":|"tueDev":|"wedDev":|"thurDev":|"friDev":|"satDev":|"sunDev":/g, '"dev":');
-    // str = str.replace(/"monQa":|"tueQa":|"wedQa":|"thurQa":|"friQa":|"satQa":|"sunQa":/g, '"qa":');
-    // let objectTest = JSON.parse(str);
-    
-    // console.log('i got the response', objectTest);
-
     _.forEach(req.body, (value, key) => {
             if (!value._id) {
                 value._id = new mongoose.mongo.ObjectID();
             }
             TestTimesheet.update(
                 {"_id": value._id},
-                {"$set": {"dev": value.dev, "qa": value.qa, "dateWorked": value.dateWorked, "userInfo": value.userInfo}},
+                {"$set": {
+                    "dev": value.dev,
+                    "qa": value.qa,
+                    "rd": value.rd,
+                    "other": value.other,
+                    "admin": value.admin,
+                    "dateWorked": value.dateWorked,
+                    "userInfo": value.userInfo}},
                 {upsert: true}, onInsert);
     });
-    // https://docs.mongodb.com/v3.2/reference/method/db.collection.update/
-    // testArray.forEach(function(data) {
-    //     TestTimesheet.update({"_id": data._id}, {"$set": {"dev": data.dev, "qa": data.qa }}, onInsert);
-    // })
         
     function onInsert(err, docs){
         if(err){
