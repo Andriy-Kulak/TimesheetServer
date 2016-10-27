@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 
-let TimesheetSchema = new mongoose.Schema({
+let TimesheetSchema2 = new mongoose.Schema({
   dateWorked: Date,
-  hoursWorked: Number,
-  workType: String,
+  qa: Number,
+  dev: Number,
+  admin: Number,
+  rd: Number,
+  other: Number,
   userInfo: {
     email: String,
     firstName: String,
@@ -14,4 +17,4 @@ let TimesheetSchema = new mongoose.Schema({
 });
 
 //   date_submitted: Date.now
-module.exports = mongoose.model('Timesheet', TimesheetSchema);
+module.exports = mongoose.model('Timesheet', TimesheetSchema2);

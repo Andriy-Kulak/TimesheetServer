@@ -1,7 +1,5 @@
 const passport = require('passport');
 const Authentication = require('./controllers/authentication');
-const passportService = require('./services/passport');
-const mongoose = require('mongoose');
 const TimeController = require('./controllers/timesheet');
 
 //by default, passport tries to provide a session cookie, so we are setting it to false
@@ -17,15 +15,8 @@ module.exports = function(app) {
 	app.post('/signup', Authentication.signup);
 
 	// updated API endpoints
+	app.get('/api/v2/timesheet', TimeController.getAllTimeData);
 	app.post('/api/v2/timesheet', TimeController.postTime);
-	app.get('/api/v2/timesheet/user/:id', TimeController.getTime2);
+	app.get('/api/v2/timesheet/user/:id', TimeController.getTimeByUser);
 	app.get('/api/v2/timesheet/:id/:week', TimeController.getTime);
-	
-
-	// OLD Timesheet API endpoints// will be depricated
-	app.post('/api/v1/timesheet', TimeController.OLDpostTime);
-	app.get('/api/v1/timesheet', TimeController.OLDgetTime);
-	app.get('/api/v1/timesheet/:id', TimeController.OLDgetTimeByUser);
-	app.delete('/api/v1/timesheet/:id', TimeController.OLDdeleteTime);
-
 }

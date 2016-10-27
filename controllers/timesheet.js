@@ -1,5 +1,4 @@
-const Timesheet = require('../models/timesheet'); // will be depricated soon
-const TestTimesheet = require('../models/timesheet2');
+const Timesheet = require('../models/timesheet');
 const _ = require('lodash');
 const moment = require('moment');
 const mongoose = require('mongoose');
@@ -10,7 +9,7 @@ const mongoose = require('mongoose');
 exports.getTime = function(req, res, next) {
     console.log('req.params.id', req.params.id);
     console.log('req.params.week', moment(req.params.week).format());
-    TestTimesheet.find({
+    Timesheet.find({
         'userInfo.sub': req.params.id,
         'dateWorked': {
             "$gte": moment(req.params.week).format(),
@@ -25,15 +24,14 @@ exports.getTime = function(req, res, next) {
     console.log('req.body', req.params.id);
 }
 
-exports.getTime2 = function(req, res, next) {
+exports.getTimeByUser = function(req, res, next) {
     console.log('req.params.id', req.params.id);
-    TestTimesheet.find({
+    Timesheet.find({
         'userInfo.sub': req.params.id
         },
         function (err, data) {
         if (err) return next(err);
         res.json(data);
-        console.log('return data', data);
     }).sort({'dateWorked': 1});
 
     console.log('req.body', req.params.id);
@@ -44,7 +42,7 @@ exports.postTime = function(req, res, next){
             if (!value._id) {
                 value._id = new mongoose.mongo.ObjectID();
             }
-            TestTimesheet.update(
+            Timesheet.update(
                 {"_id": value._id},
                 {"$set": {
                     "dev": value.dev,
@@ -67,45 +65,9 @@ exports.postTime = function(req, res, next){
 }
 
 // GET (all) method for timesheet
-exports.OLDgetTime = function(req, res, next) {
+exports.getAllTimeData = function(req, res, next) {
     Timesheet.find(function (err, data) {
         if (err) return next(err);
         res.json(data);
-    });
+    }).sort({'dateWorked': 1});
 };
-
-// GET by user name (temporary)
-exports.OLDgetTimeByUser = function(req, res, next) {
-    Timesheet.find({'userInfo.sub': req.params.id}, function (err, data) {
-        if (err) return next(err);
-        res.json(data);
-    });
-}
-
-//POST method for timesheet
-exports.OLDpostTime = function(req, res, next) {
-    const dateWorked = req.body.dateWorked;
-    const hoursWorked = req.body.hoursWorked;
-    const workType = req.body.workType;
-    const userInfo = req.body.userInfo;
-
-    const timesheet = new Timesheet({
-        dateWorked: dateWorked,
-        hoursWorked: hoursWorked,
-        workType: workType,
-        userInfo: userInfo
-    });
-    console.log('userInfo', userInfo);
-
-    timesheet.save(req.body, function (err, data) {
-        if (err) return next(err);
-        res.json(data);
-    });
-}
-
-exports.OLDdeleteTime = function(req, res, next) {
-    Timesheet.findByIdAndRemove(req.params.id, req.body, function (err, data) {
-        if (err) return next(err);
-        res.json(data);
-    });
-}
