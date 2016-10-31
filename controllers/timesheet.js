@@ -37,6 +37,53 @@ exports.getTimeByUser = function(req, res, next) {
     console.log('req.body', req.params.id);
 }
 
+exports.getTest = function (req, res, next) {
+    console.log('req.params.id', req.params.id);
+    Timesheet.aggregate([
+        {$match: {
+                'userInfo.sub': req.params.id
+            }
+        },
+        {$project: {
+            dateWorked: {$subtract: [ '$dateWorked', 24 * 60 * 60 * 1000]},         
+            dev: '$dev',
+            qa: '$qa',
+            admin: '$admin',
+            other: '$other',
+            rd: '$rd'
+            
+        }
+        },
+        {$group: {
+                _id: {$week: '$dateWorked'},
+                weekOf: {$min: '$dateWorked'},
+                docCount: {$sum: 1},
+                dev: {$sum: '$dev'},
+                qa: {$sum: '$qa'},
+                admin: {$sum: '$admin'},
+                other: {$sum: '$other'},
+                rd: {$sum: '$rd'},
+                total: {$sum: {$add: ['$rd', '$other', '$admin', '$qa', '$dev']}}
+            }
+        },
+        {"$sort": {weekOf: 1}}
+    ], function(err, data) {
+        if (err) return next(err);
+        res.json(data);
+    });
+
+
+    // Timesheet.find({
+    //     'userInfo.sub': req.params.id
+    //     },
+    //     function (err, data) {
+    //     if (err) return next(err);
+    //     res.json(data);
+    // }).sort({'dateWorked': 1});
+
+    // console.log('req.body', req.params.id);
+}
+
 exports.postTime = function(req, res, next){
     _.forEach(req.body, (value, key) => {
             if (!value._id) {
