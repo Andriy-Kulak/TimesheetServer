@@ -2,6 +2,7 @@ const Timesheet = require('../models/timesheet');
 const _ = require('lodash');
 const moment = require('moment');
 const mongoose = require('mongoose');
+const User = require('../models/user');
 
 // gets data for specific timesheet
 // searches for the user (req.params.id) and the week (req.params.week)
@@ -117,4 +118,20 @@ exports.getAllTimeData = function(req, res, next) {
         if (err) return next(err);
         res.json(data);
     }).sort({'dateWorked': 1});
+};
+
+exports.getUsers = function(req, res, next) {
+    let userData = []; // array where user data will be stored
+    User.find(function (err, data) {
+        if (err) return next(err);
+        _.map(data, function(obj){
+            userData.push({
+                name: obj.firstName + ' ' + obj.lastName,
+                email: obj.email,
+                _id: obj.id
+            })               
+        })
+
+        res.json(userData);
+    });
 };
