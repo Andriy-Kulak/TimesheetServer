@@ -46,6 +46,7 @@ exports.getTest = function (req, res, next) {
             }
         },
         {$project: {
+            dateWorkedmin: '$dateWorked',
             dateWorked: {$subtract: [ '$dateWorked', 24 * 60 * 60 * 1000]},         
             dev: '$dev',
             qa: '$qa',
@@ -57,7 +58,7 @@ exports.getTest = function (req, res, next) {
         },
         {$group: {
                 _id: {$week: '$dateWorked'},
-                weekOf: {$min: '$dateWorked'},
+                weekOf: {$min: '$dateWorkedmin'},
                 docCount: {$sum: 1},
                 dev: {$sum: '$dev'},
                 qa: {$sum: '$qa'},
@@ -72,17 +73,54 @@ exports.getTest = function (req, res, next) {
         if (err) return next(err);
         res.json(data);
     });
+}
 
-
-    // Timesheet.find({
-    //     'userInfo.sub': req.params.id
-    //     },
-    //     function (err, data) {
-    //     if (err) return next(err);
-    //     res.json(data);
-    // }).sort({'dateWorked': 1});
-
-    // console.log('req.body', req.params.id);
+exports.getAllAverage = function (req, res, next) {
+    Timesheet.aggregate([
+        {$project: {
+            dateWorkedmin: '$dateWorked',
+            dateWorked: {$subtract: [ '$dateWorked', 24 * 60 * 60 * 1000]},         
+            dev: '$dev',
+            qa: '$qa',
+            admin: '$admin',
+            other: '$other',
+            rd: '$rd'
+            
+        }
+        },
+        {$group: {
+                _id: {
+                    day: { $dayOfYear: '$dateWorked'},
+                    week: {$week: '$dateWorked'},
+                    year: { $year: '$dateWorked'},
+                },
+                dayWorked: {$first: '$dateWorked'},
+                dev: {$avg: '$dev'},
+                qa: {$avg: '$qa'},
+                admin: {$avg: '$admin'},
+                other: {$avg: '$other'},
+                rd: {$avg: '$rd'}
+            }
+        },
+        {$group: {
+                _id: {
+                    week: {$week: '$dayWorked'},
+                    year: { $year: '$dayWorked'}},
+                weekOf: {$min: {$add: ['$dayWorked', 24 * 60 * 60 * 1000]}},
+                docCount: {$sum: 1},
+                dev: {$sum: '$dev'},
+                qa: {$sum: '$qa'},
+                admin: {$sum: '$admin'},
+                other: {$sum: '$other'},
+                rd: {$sum: '$rd'},
+                total: {$sum: {$add: ['$rd', '$other', '$admin', '$qa', '$dev']}}
+            }
+        },
+        {"$sort": {weekOf: 1}}
+    ], function(err, data) {
+        if (err) return next(err);
+        res.json(data);
+    });
 }
 
 exports.postTime = function(req, res, next){
@@ -124,14 +162,18 @@ exports.getUsers = function(req, res, next) {
     let userData = []; // array where user data will be stored
     User.find(function (err, data) {
         if (err) return next(err);
+        userData.push({
+                label: 'All Users',
+                email: 'n/a',
+                value: 'all'
+            }) 
         _.map(data, function(obj){
             userData.push({
-                name: obj.firstName + ' ' + obj.lastName,
+                label: obj.firstName + ' ' + obj.lastName,
                 email: obj.email,
-                _id: obj.id
+                value: obj.id
             })               
         })
-
         res.json(userData);
     });
 };

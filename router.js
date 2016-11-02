@@ -17,6 +17,7 @@ module.exports = function(app) {
 	app.post('/signup', Authentication.signup);
 
 	// updated API endpoints
+	app.get('/api/v2/test', TimeController.getAllAverage);
 	app.get('/api/v2/test/:id', TimeController.getTest);
 	app.get('/api/v2/users', TimeController.getUsers);
 	app.get('/api/v2/timesheet', TimeController.getAllTimeData);
