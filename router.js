@@ -3,6 +3,7 @@ const Authentication = require('./controllers/authentication');
 const passportService = require('./services/passport');
 const mongoose = require('mongoose');
 const TimeController = require('./controllers/timesheet');
+const ChartController = require('./controllers/charts');
 
 //by default, passport tries to provide a session cookie, so we are setting it to false
 const requireAuth = passport.authenticate('jwt', {session: false});
@@ -17,8 +18,8 @@ module.exports = function(app) {
 	app.post('/signup', Authentication.signup);
 
 	// updated API endpoints
-	app.get('/api/v2/test', TimeController.getAllAverage);
-	app.get('/api/v2/test/:id', TimeController.getTest);
+	app.get('/api/v2/chart', ChartController.getAllAverage);
+	app.get('/api/v2/chart/:id', ChartController.getChartByUser);
 	app.get('/api/v2/users', TimeController.getUsers);
 	app.get('/api/v2/timesheet', TimeController.getAllTimeData);
 	app.post('/api/v2/timesheet', TimeController.postTime);

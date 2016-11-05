@@ -9,7 +9,6 @@ const User = require('../models/user');
 // query is also sorted in ascending order (monday is req.body[0] while sunday is req.body[6])
 exports.getTime = function(req, res, next) {
     console.log('req.params.id', req.params.id);
-    console.log('req.params.week', moment(req.params.week).format());
     Timesheet.find({
         'userInfo.sub': req.params.id,
         'dateWorked': {
@@ -21,8 +20,6 @@ exports.getTime = function(req, res, next) {
         res.json(data);
         console.log('return data', data);
     }).sort({'dateWorked': 1});
-
-    console.log('req.body', req.params.id);
 }
 
 exports.getTimeByUser = function(req, res, next) {
@@ -34,93 +31,6 @@ exports.getTimeByUser = function(req, res, next) {
         if (err) return next(err);
         res.json(data);
     }).sort({'dateWorked': 1});
-
-    console.log('req.body', req.params.id);
-}
-
-exports.getTest = function (req, res, next) {
-    console.log('req.params.id', req.params.id);
-    Timesheet.aggregate([
-        {$match: {
-                'userInfo.sub': req.params.id
-            }
-        },
-        {$project: {
-            dateWorkedmin: '$dateWorked',
-            dateWorked: {$subtract: [ '$dateWorked', 24 * 60 * 60 * 1000]},         
-            dev: '$dev',
-            qa: '$qa',
-            admin: '$admin',
-            other: '$other',
-            rd: '$rd'
-            
-        }
-        },
-        {$group: {
-                _id: {$week: '$dateWorked'},
-                weekOf: {$min: '$dateWorkedmin'},
-                docCount: {$sum: 1},
-                dev: {$sum: '$dev'},
-                qa: {$sum: '$qa'},
-                admin: {$sum: '$admin'},
-                other: {$sum: '$other'},
-                rd: {$sum: '$rd'},
-                total: {$sum: {$add: ['$rd', '$other', '$admin', '$qa', '$dev']}}
-            }
-        },
-        {"$sort": {weekOf: 1}}
-    ], function(err, data) {
-        if (err) return next(err);
-        res.json(data);
-    });
-}
-
-exports.getAllAverage = function (req, res, next) {
-    Timesheet.aggregate([
-        {$project: {
-            dateWorkedmin: '$dateWorked',
-            dateWorked: {$subtract: [ '$dateWorked', 24 * 60 * 60 * 1000]},         
-            dev: '$dev',
-            qa: '$qa',
-            admin: '$admin',
-            other: '$other',
-            rd: '$rd'
-            
-        }
-        },
-        {$group: {
-                _id: {
-                    day: { $dayOfYear: '$dateWorked'},
-                    week: {$week: '$dateWorked'},
-                    year: { $year: '$dateWorked'},
-                },
-                dayWorked: {$first: '$dateWorked'},
-                dev: {$avg: '$dev'},
-                qa: {$avg: '$qa'},
-                admin: {$avg: '$admin'},
-                other: {$avg: '$other'},
-                rd: {$avg: '$rd'}
-            }
-        },
-        {$group: {
-                _id: {
-                    week: {$week: '$dayWorked'},
-                    year: { $year: '$dayWorked'}},
-                weekOf: {$min: {$add: ['$dayWorked', 24 * 60 * 60 * 1000]}},
-                docCount: {$sum: 1},
-                dev: {$sum: '$dev'},
-                qa: {$sum: '$qa'},
-                admin: {$sum: '$admin'},
-                other: {$sum: '$other'},
-                rd: {$sum: '$rd'},
-                total: {$sum: {$add: ['$rd', '$other', '$admin', '$qa', '$dev']}}
-            }
-        },
-        {"$sort": {weekOf: 1}}
-    ], function(err, data) {
-        if (err) return next(err);
-        res.json(data);
-    });
 }
 
 exports.postTime = function(req, res, next){
