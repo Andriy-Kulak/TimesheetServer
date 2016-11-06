@@ -38,14 +38,17 @@ exports.postTime = function(req, res, next){
             if (!value._id) {
                 value._id = new mongoose.mongo.ObjectID();
             }
+            
             Timesheet.update(
-                {"_id": value._id},
+                {'userInfo.sub': value.userInfo.sub,
+                'dateWorked': moment(value.dateWorked).format()},
                 {"$set": {
                     "dev": value.dev,
                     "qa": value.qa,
                     "rd": value.rd,
                     "other": value.other,
                     "admin": value.admin,
+                    "dateCreated": new Date().getTime(),
                     "dateWorked": value.dateWorked,
                     "userInfo": value.userInfo}},
                 {upsert: true}, onInsert);

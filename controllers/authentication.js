@@ -20,11 +20,9 @@ exports.signin = function(req, res) {
 	//User has already had their email and password auth'd
 	// We just need to give them
 
-
 	res.send({
 		token: tokenForUser(req.user),
 	});
-
 }
 
 //Signup function

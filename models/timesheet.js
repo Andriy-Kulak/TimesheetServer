@@ -7,6 +7,7 @@ let TimesheetSchema2 = new mongoose.Schema({
   admin: Number,
   rd: Number,
   other: Number,
+  dateCreated: Date,
   userInfo: {
     email: String,
     firstName: String,
